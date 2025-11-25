@@ -22,9 +22,13 @@ class TransactionController extends Controller
      */
     public function index(TransactionFilterRequest $request)
     {
+        try{
         $filters = $request->validated();
         $transactions = $this->transactionService->listForUser($request->user(), $filters);
         return TransactionResource::collection($transactions);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch transactions', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -33,9 +37,13 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
+        try {
         $data = $request->validated();
         $transaction = $this->transactionService->createForUser($request->user(), $data);
         return new TransactionResource($transaction);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create transaction', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -44,8 +52,12 @@ class TransactionController extends Controller
      */
     public function show(Request $request, int $id)
     {
-        $transaction = $this->transactionService->findForUser($request->user(), $id);
-        return new TransactionResource($transaction);
+        try{
+            $transaction = $this->transactionService->findForUser($request->user(), $id);
+            return new TransactionResource($transaction);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Transaction not found', 'message' => $e->getMessage()], 404);
+        }
     }
 
     /**
@@ -54,9 +66,13 @@ class TransactionController extends Controller
      */
     public function update(TransactionRequest $request, int $id)
     {
+        try{
         $data = $request->validated();
         $transaction = $this->transactionService->updateForUser($request->user(), $id, $data);
         return new TransactionResource($transaction);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update transaction', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -65,8 +81,12 @@ class TransactionController extends Controller
      */
     public function destroy(Request $request, int $id)
     {
+        try{
         $this->transactionService->deleteTransaction($request->user(), $id);
         return response()->json(['message' => 'Transaction deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete transaction', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -75,9 +95,14 @@ class TransactionController extends Controller
      */
     public function monthlySummary(Request $request)
     {
+        try{
         $monthsBack = $request->input('months', 6);
         $summary = $this->transactionService->sumByMonth($request->user(), $monthsBack);
         return response()->json(['data' => $summary], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch monthly summary', 'message' => $e->getMessage()], 500);
+    
+        }    
     }
 }
 
