@@ -18,6 +18,11 @@ class TransactionService implements TransactionServiceInterface
      * @return Transaction
      */
     public function createForUser(User $user, array $data): Transaction{
+        // Ensure required date is present (migration requires non-null date)
+        if (empty($data['date'])) {
+            $data['date'] = now()->toDateString();
+        }
+
         return $user->transactions()->create($data);
     }
 

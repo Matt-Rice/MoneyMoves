@@ -23,12 +23,16 @@ class UserController extends Controller
      */
     public function createToken(Request $request)
     {
+        try{
         $token = $request->user()->createToken('api-token');
         if (!isset($token->plainTextToken)) {
             return response()->json(['error' => 'Unable to create token'], 500);
         }
 
         return response()->json(['token' => $token->plainTextToken], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create token', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -38,35 +42,39 @@ class UserController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
-        request()->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+        try{
+            request()->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email',
+                'password' => 'required'
+            ]);
 
-        if (!isset($request->email) || !isset($request->name) || !isset($request->password)) {
-            return response()->json(['error' => 'Missing required fields'], 400);
+            if (!isset($request->email) || !isset($request->name) || !isset($request->password)) {
+                return response()->json(['error' => 'Missing required fields'], 400);
+            }
+
+            // Check for duplicate
+            if (User::where('email', $request->email)->exists()) {
+                return response()->json(['error' => 'User already exists'], 409);
+            }
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password)
+            ]);
+            
+            // Generate token for the newly created user
+            $token = $user->createToken('api-token');
+
+            return response()->json([
+                'message' => 'User registered successfully',
+                'token' => $token->plainTextToken,
+                'user' => $user->only('id', 'name', 'email')
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Registration failed', 'message' => $e->getMessage()], 500);
         }
-
-        // Check for duplicate
-        if (User::where('email', $request->email)->exists()) {
-            return response()->json(['error' => 'User already exists'], 409);
-        }
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
-        ]);
-        
-        // Generate token for the newly created user
-        $token = $user->createToken('api-token');
-
-        return response()->json([
-            'message' => 'User registered successfully',
-            'token' => $token->plainTextToken,
-            'user' => $user->only('id', 'name', 'email')
-        ], 201);
     }
 
     /**
@@ -76,40 +84,48 @@ class UserController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        request()->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+        try{
+            request()->validate([
+                'email' => 'required|email',
+                'password' => 'required'
+            ]);
 
-        if (!isset($request->email) || !isset($request->password)) {
-            return response()->json(['error' => 'Missing required fields'], 400);
+            if (!isset($request->email) || !isset($request->password)) {
+                return response()->json(['error' => 'Missing required fields'], 400);
+            }
+
+            $credentials = $request->only('email', 'password');
+
+            // find user
+            $user = User::where('email', $credentials['email'])->first();
+
+            if ($user && Hash::check($credentials['password'], $user->password)) {
+                $token = $user->createToken('api-token');
+                return response()->json([
+                    'token' => $token->plainTextToken,
+                    'user' => $user->only('id', 'name', 'email')
+                ], 200);
+            }
+
+            return response()->json(['error' => 'Invalid credentials'], 401);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Login failed', 'message' => $e->getMessage()], 500);
         }
-
-        $credentials = $request->only('email', 'password');
-
-        // find user
-        $user = User::where('email', $credentials['email'])->first();
-
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            $token = $user->createToken('api-token');
-            return response()->json([
-                'token' => $token->plainTextToken,
-                'user' => $user->only('id', 'name', 'email')
-            ], 200);
-        }
-
-        return response()->json(['error' => 'Invalid credentials'], 401);
     }
 
     //logout function
     public function logout(Request $request): JsonResponse
     {
-        if (!$request->user()) {
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
+        try{
+            if (!$request->user()) {
+                return response()->json(['error' => 'Unauthenticated'], 401);
+            }
 
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logged out successfully'], 200);
+            $request->user()->currentAccessToken()->delete();
+            return response()->json(['message' => 'Logged out successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Logout failed', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -119,10 +135,14 @@ class UserController extends Controller
      */
     public function me(Request $request): JsonResponse
     {
-        if (!$request->user()) {
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
+        try{
+            if (!$request->user()) {
+                return response()->json(['error' => 'Unauthenticated'], 401);
+            }
 
-        return response()->json($request->user()->only('id', 'name', 'email'));
+            return response()->json($request->user()->only('id', 'name', 'email'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve user', 'message' => $e->getMessage()], 500);
+        }
     }
 }

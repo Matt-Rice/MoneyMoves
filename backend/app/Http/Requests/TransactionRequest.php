@@ -23,6 +23,7 @@ class TransactionRequest extends FormRequest
             'type' => 'required|in:income,expense',
             'category' => 'required|string|max:100',
             'amount' => 'required|numeric|min:0.01',
+            'date' => 'nullable|date',
             'description' => 'nullable|string|max:500',
         ];
     }
