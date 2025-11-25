@@ -38,7 +38,7 @@ export default function LoginScreen() {
       });
 
       // Navigate to home/dashboard
-      router.replace('./(tabs)/index');
+      router.replace('/(tabs)/about');
     } catch (error) {
       console.error('Login error:', error);
       let message = 'An error occurred';
