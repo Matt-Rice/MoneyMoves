@@ -1,15 +1,7 @@
 import { useEffect, useState } from "react"
-import { View } from "react-native";
-
-export type Transaction = {
-    type: 'income' | 'expense';
-    category?: string;
-    date: string;
-    description?: string;
-    amount: number;
-    createdAt: string;
-    updatedAt: string;
-}
+import { View, Text, StatusBar } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { PaginatedTransactionsResponse, Transaction, Meta, PaginationLink, MetaLink } from "@/lib/transactionHandler";
 
 export default function TransactionsPage() {
     const [transactions, setTransactions] = useState<Array<Transaction>>([])
@@ -21,6 +13,8 @@ export default function TransactionsPage() {
             setLoading(true)
             var fetchedTransactions: Array<Transaction> = [
                 {
+                    id: 1,
+                    user_id: 1,
                     type: 'income',
                     category: 'paycheck',
                     date: '2024-06-01',
