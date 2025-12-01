@@ -5,18 +5,24 @@ import { useApi } from '../../lib/api';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
 
+export type User ={
+  id: string;
+  email: string;
+  name: string;
+}
+
 export default function HomeTab() {
   const { user, signOut } = useAuth();
   const api = useApi();
   const router = useRouter();
-  const [data, setData] = useState<any>(null);
+  const [userResponse, setUserResponse] = useState<User>();
   const [loading, setLoading] = useState(false);
 
   const fetchUserData = async () => {
     setLoading(true);
     try {
       const response = await api.get('/api/user');
-      setData(response.data);
+      setUserResponse(response.data);
     } catch (error) {
       const message = axios.isAxiosError(error)
         ? error.response?.data?.message || error.message
@@ -46,8 +52,8 @@ export default function HomeTab() {
 
       {loading ? (
         <ActivityIndicator size="large" style={styles.loader} />
-      ) : data ? (
-        <Text style={styles.text}>{JSON.stringify(data, null, 2)}</Text>
+      ) : userResponse ? (
+        <Text style={styles.text}>{userResponse.id + ' - ' + userResponse.email + ' - ' + userResponse.name}</Text>
       ) : (
         <Text style={styles.text}>No data yet</Text>
       )}
@@ -63,17 +69,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f50e',
+    backgroundColor: '#25292e',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
+    padding: 10,
     marginBottom: 20,
+    color: '#ffffffff',
   },
   text: {
     fontSize: 14,
     marginBottom: 20,
-    color: '#333',
+    color: '#ffffffff',
   },
   loader: {
     marginBottom: 20,

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { AuthProvider } from "../lib/auth";
 import { createApiClient } from "../lib/api";
+import { View } from "react-native-reanimated/lib/typescript/Animated";
 
 export default function RootLayout() {
   const router = useRouter();
@@ -14,15 +15,20 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-      </Stack>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+        </Stack>
     </AuthProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  about: {},
-  index: {},
+  container: {
+    flex: 1,
+    backgroundColor: '#25292e',
+  },
+  text: {
+    color: '#fff',
+  },
 });
