@@ -38,7 +38,7 @@ export default function LoginScreen() {
       });
 
       // Navigate to home/dashboard
-      router.replace('./(tabs)/index');
+      router.replace('/(tabs)/about');
     } catch (error) {
       console.error('Login error:', error);
       let message = 'An error occurred';
@@ -68,7 +68,7 @@ export default function LoginScreen() {
       <TextInput
         style={styles.input}
         placeholder="Email"
-        placeholderTextColor="#999"
+        placeholderTextColor="#e2e2e2ff"
         value={email}
         onChangeText={setEmail}
         editable={!loading}
@@ -79,7 +79,7 @@ export default function LoginScreen() {
       <TextInput
         style={styles.input}
         placeholder="Password"
-        placeholderTextColor="#999"
+        placeholderTextColor="#e2e2e2ff"
         value={password}
         onChangeText={setPassword}
         editable={!loading}
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#25292e',
   },
   title: {
     fontSize: 24,
@@ -132,11 +132,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#332c2cff',
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#4d0707ff',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',

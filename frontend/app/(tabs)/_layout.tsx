@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";
+import { StyleSheet } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function TabLayout() {
@@ -6,18 +7,18 @@ export default function TabLayout() {
 
     <Tabs 
      screenOptions={{
-        tabBarActiveTintColor: '#ffd33d',
+        tabBarActiveTintColor: '#d81010ff',
         headerStyle: {
-        backgroundColor: '#25292e',
+        backgroundColor: '#0c2542ff',
         },
         headerShadowVisible: false,
         headerTintColor: '#fff',
         tabBarStyle: {
-        backgroundColor: '#25292e',
+        backgroundColor: '#0c2542ff',
         },
       }}   
     >
-<Tabs.Screen
+      <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
@@ -35,8 +36,18 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="transactions"
+        options={{
+          title: 'Transactions',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'card' : 'card-outline'} color={color} size={24}/>
+          ),
+        }}
+      />
     </Tabs>
 
   );
 
 }
+

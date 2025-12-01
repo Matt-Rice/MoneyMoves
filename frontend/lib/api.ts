@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = 'http://192.168.1.234:8000';
 const STORAGE_KEY = 'authToken';
 let apiClient: AxiosInstance | null = null;
 let routerRef: any = null;
@@ -19,7 +19,7 @@ export function createApiClient(router?: any): AxiosInstance {
 
   apiClient = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10000,
+    timeout: 100000,
     headers: {
       'Content-Type': 'application/json',
     },

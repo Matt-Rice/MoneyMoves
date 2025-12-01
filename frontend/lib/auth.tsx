@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (storedToken) {
           setToken(storedToken);
           //Get user profile
-          const user: User = (await api.get('/api/me')).data;
+          const user: User = (await api.get('/api/user')).data;
              
           // If user is not found
           if (!user || !user.id){
@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else {
 
         try {
-            const resp = await api.get('/api/me');
+            const resp = await api.get('/api/user');
             const profile = resp.data;
             if (profile?.id) {
             setUser({ id: String(profile.id), email: profile.email, name: profile.name });
