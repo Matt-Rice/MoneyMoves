@@ -2,6 +2,7 @@ import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import CategoryFilter from "./CategoryFilter";
+import Dropdown from "../Dropdown";
 
 interface HeaderFiltersProps {
   description: string;

@@ -3,12 +3,13 @@ import { View, Text, StatusBar, ScrollView } from "react-native";
 import { PaginatedTransactionsResponse, Transaction, Meta, PaginationLink, MetaLink } from "@/lib/transactionHandler";
 import { useApi } from "@/lib/api";
 import TransactionsList from "@/components/transactions/TransactionsList";
+import AddTransactionView from "@/components/transactions/AddTransaction";
 
 export default function TransactionsPage() {
-    const [transactions, setTransactions] = useState<Transaction[]>([])
-    const [meta, setMeta] = useState<Meta>()
-    const [transactionResponse, setResponse] = useState<PaginatedTransactionsResponse>()
-    const [loading, setLoading] = useState(false)
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [meta, setMeta] = useState<Meta>();
+    const [transactionResponse, setResponse] = useState<PaginatedTransactionsResponse>();
+    const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const api = useApi();
@@ -52,19 +53,13 @@ export default function TransactionsPage() {
 
     return (
         <View style={styles.container}>
-            <Text>
-                Transactions Page
-            </Text>
-            <ScrollView>
-
-                <TransactionsList
-                    data = {transactions}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={onPageChange}
-                    onPerPageChange={onPerPageChange}
-                />
-            </ScrollView>
+            <TransactionsList
+                data = {transactions}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+                onPerPageChange={onPerPageChange}
+            />  
         </View>
     );
 }
@@ -75,4 +70,7 @@ const styles = {
         padding: 20,
         backgroundColor: '#25292e',
     },
+    listView:{
+        height: 40
+    }
 }

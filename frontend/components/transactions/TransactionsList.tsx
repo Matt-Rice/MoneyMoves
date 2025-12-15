@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
 
 
 
+
 // Flashlist component to display transactions
 // export default function TransactionsList(data: Array<Transaction>,  meta: Meta, links: PaginationLink) {
 //     return (

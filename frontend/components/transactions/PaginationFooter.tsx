@@ -1,26 +1,55 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { View, Text, StyleSheet, Pressable, TextInput, Modal } from "react-native";
+import { useState } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Transaction } from "@/lib/transactionHandler";
 
 interface PaginationFooterProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  onPerPageChange: (perPage: number) => void;
+  onPerPageChange: (perPage: string) => void;
 }
 
-export default function PaginationFooter({ currentPage, totalPages, onPageChange, onPerPageChange }: PaginationFooterProps) {
+export default function PaginationFooter({ 
+  currentPage, 
+  totalPages, 
+  onPageChange, 
+  onPerPageChange }: PaginationFooterProps) {
+  
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <View style={styles.footer}>
-      <Picker
-        selectedValue={15}
-        onValueChange={onPerPageChange}
-        style={{ width: 150 }}
+      <Pressable
+        onPress={() => setModalVisible(true)}>
+          <Ionicons name="add-circle-outline" size={24} color={"#333"} />
+      </Pressable>
+       <Modal
+        visible={modalVisible} 
+        transparent
+        animationType="fade"
       >
-        <Picker.Item label="10" value={10} />
-        <Picker.Item label="15" value={15} />
-        <Picker.Item label="25" value={25} />
-        <Picker.Item label="50" value={50} />
-      </Picker>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Add Transaction</Text>
+                <Pressable onPress={() => setModalVisible(false)}>
+                  <Ionicons name="close-outline" size={24} color="#333" />
+                </Pressable>
+                
+
+              </View>
+          </View>
+        </View>
+      </Modal>
+
+      <TextInput
+        value={totalPages.toString()}
+        onChangeText={ (v) => { onPerPageChange(v) }}
+        placeholderTextColor={'gray'}
+        placeholder="15"
+        style={styles.input}
+      />
 
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <Pressable
@@ -48,21 +77,55 @@ export default function PaginationFooter({ currentPage, totalPages, onPageChange
 }
 
 const styles = StyleSheet.create({
-    footer:{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 12,
-        backgroundColor: "white",
-        borderTopWidth: 1,
-        borderColor: "#ccc"
+  footer:{
+      flexDirection: "row",
+      justifyContent: "space-between",
+      padding: 12,
+      backgroundColor: "white",
+      borderTopWidth: 1,
+      borderColor: "#ccc"
+  },
+  input:{
+    backgroundColor: "#f3f3f3",
+    padding: 10,
+    borderRadius: 6,
+    marginBottom: 10
+  },
+  pageBtn:{
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      backgroundColor: "#e5e5e5",
+      borderRadius: 6
+  },
+  pageBtnDisabled:{
+      opacity: 0.5
+  },
+    close:{ 
+      marginTop: 20
     },
-    pageBtn:{
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        backgroundColor: "#e5e5e5",
-        borderRadius: 6
+    modalView:{
+      height: 700, 
+      width: 400, 
+      padding: 20, 
+      backgroundColor: 'white', 
+      borderRadius: 10
     },
-    pageBtnDisabled:{
-        opacity: 0.5
-    }
+    modalContainer:{
+      flex: 1, 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      backgroundColor: 'rgba(0,0,0,0.5)' 
+    },
+    modalHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between", // pushes text left, close button right
+      alignItems: "center",
+      marginBottom: 10,
+      padding: 10,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      textAlign: "center"
+    },
 });
